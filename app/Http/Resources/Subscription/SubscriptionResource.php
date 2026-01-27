@@ -23,6 +23,7 @@ class SubscriptionResource extends JsonResource
             'start_date' => $this->start_date->toDateString(),
             'expiration_date' => $this->expiration_date->toDateString(),
             'type' => $this->type,
+            'is_active' => $this->is_active,
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }

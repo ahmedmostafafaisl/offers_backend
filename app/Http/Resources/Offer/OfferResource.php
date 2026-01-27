@@ -17,6 +17,7 @@ class OfferResource extends JsonResource
             'user_id' => $this->user_id,
             'category_id' => (int) $this->category_id,
 
+
             'name' => $this->name,
             'details' => $this->details,
 
@@ -41,6 +42,8 @@ class OfferResource extends JsonResource
             'expiration_date' => $this->expiration_date,
 
             'phone' => $this->phone,
+            'provider_phone' => $this->user->phone,
+            'store_number' => $this->user->store_number,
             'is_active' => (bool) $this->is_active,
 
             // counters (read-only)
@@ -78,7 +81,7 @@ class OfferResource extends JsonResource
             }, []),
 
             'social_media' => $this->whenLoaded('socialMedia', function () {
-                return $this->socialMedia->map(fn($s) => [
+                return $this->user->socialMedia->map(fn($s) => [
                     'platform' => $s->platform,
                     'url' => $s->url,
                 ]);

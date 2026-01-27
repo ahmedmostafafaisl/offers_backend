@@ -236,9 +236,10 @@ class OfferRepository implements OfferRepositoryInterface
             ->where('expiration_date', '>=', now())
             ->count();
 
+        $offerIds = Offer::where('user_id', $user->id)->pluck('id');
         // Assuming Offer model has 'views' and 'likes' columns or relationships
         $numberOfViews = Offer::where('user_id', $user->id)->sum('views');
-        $numberOfLikes = FavoriteOffer::where('user_id', $user->id)->count();
+        $numberOfLikes = FavoriteOffer::whereIn('offer_id', $offerIds)->count();
 
         // Example: subscription duration from user's subscription start date
 

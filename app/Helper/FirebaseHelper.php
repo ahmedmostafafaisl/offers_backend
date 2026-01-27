@@ -9,7 +9,7 @@ class FirebaseHelper
 {
     public static function sendNotification(string $token, string $title, string $body, array $data = []): array
     {
-        $projectId = env('FIREBASE_PROJECT_ID');
+        $projectId = "offers-project-d190d" ?? env('FIREBASE_PROJECT_ID');
         $url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
 
         // ✅ Firebase requires all data values be strings
@@ -41,7 +41,7 @@ class FirebaseHelper
 
     private static function getAccessToken(): string
     {
-        $credsPath = base_path(env('FIREBASE_CREDENTIALS'));
+        $credsPath = $path = storage_path('service-account.json') ?? base_path(env('FIREBASE_CREDENTIALS'));
         putenv('GOOGLE_APPLICATION_CREDENTIALS=' . $credsPath);
 
         $scopes = ['https://www.googleapis.com/auth/firebase.messaging'];

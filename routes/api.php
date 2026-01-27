@@ -74,10 +74,10 @@ Route::apiResource('plans', PlanController::class);
 Route::apiResource('subscriptions', SubscriptionController::class);
 Route::apiResource('categories', CategoryController::class);
 
+Route::apiResource('offers', OfferController::class)
+    ->only(['index', 'show']);
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::apiResource('offers', OfferController::class)
-        ->only(['index', 'show']);
 
     Route::apiResource('offers', OfferController::class)
         ->only(['store', 'update', 'destroy'])
@@ -189,4 +189,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('logout/users', function (Request $request) {
     PersonalAccessToken::query()->delete();
+});
+
+
+// check active subscription middleware
+Route::middleware([
+    'auth:sanctum',
+    'provider.subscription'
+])->get('check/active/subscription', function () {
+    return response()->json(['status' => true, 'message' => 'Active subscription found.'], 200);
 });

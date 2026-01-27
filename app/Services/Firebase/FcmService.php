@@ -16,7 +16,8 @@ class FcmService
 
     private function accessToken(): string
     {
-        $credsPath = base_path(env('FIREBASE_CREDENTIALS'));
+        $credsPath = $path = storage_path('service-account.json') ?? base_path(env('FIREBASE_CREDENTIALS'));
+
         putenv('GOOGLE_APPLICATION_CREDENTIALS=' . $credsPath);
 
         $scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
@@ -28,7 +29,7 @@ class FcmService
 
     public function sendToTopic(string $topic, array $notification, array $data = []): array
     {
-        $projectId = env('FIREBASE_PROJECT_ID');
+        $projectId = "offers-project-d190d" . env('FIREBASE_PROJECT_ID');
         $url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
 
         $body = [
