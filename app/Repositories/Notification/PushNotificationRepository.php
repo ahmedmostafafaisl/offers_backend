@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Api;
+namespace App\Repositories\Api\Notification;
 
 use App\Models\Offer;
 use App\Services\Firebase\FcmService;

@@ -17,8 +17,9 @@ class PlansSeeder extends Seeder
         for ($i = 1; $i <= 10; $i++) {
             $rows[] = [
                 'name' => "Plan {$i}",
-                'monthly_price' => 49 + ($i * 5),
-                'annually_price' => 499 + ($i * 50),
+                'quarterly_price' => 9.99 * $i,
+                'semi_annual_price' => 17.99 * $i,
+                'annual_price' => 29.99 * $i,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];

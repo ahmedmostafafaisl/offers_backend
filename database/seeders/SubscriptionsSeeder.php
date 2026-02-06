@@ -15,7 +15,7 @@ class SubscriptionsSeeder extends Seeder
         $providers = DB::table('users')->where('type', 'provider')->orderBy('id')->get();
         $plans = DB::table('plans')->orderBy('id')->get();
         if ($providers->isEmpty() || $plans->isEmpty()) return;
-
+        $types = ['quarterly', 'semi_annual', 'annual'];
         $rows = [];
         for ($i = 0; $i < 10; $i++) {
             $u = $providers[$i % $providers->count()];
@@ -25,8 +25,8 @@ class SubscriptionsSeeder extends Seeder
                 'user_id' => $u->id,
                 'plan_id' => $p->id,
                 'start_date' => now()->toDateString(),
-                'expiration_date' => now()->addMonth()->toDateString(),
-                'type' => 'monthly',
+                'expiration_date' => now()->addMonths(3)->toDateString(),
+                'type' =>  'quarterly',
                 'is_active' => true,
                 'created_at' => $now,
                 'updated_at' => $now,

@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->decimal('monthly_price', 10, 2)->default(0);
-            $table->decimal('annually_price', 10, 2)->default(0);
+            $table->decimal('quarterly_price', 10, 2)->nullable();
+            $table->decimal('semi_annual_price', 10, 2)->nullable();
+            $table->decimal('annual_price', 10, 2)->nullable();
             $table->timestamps();
         });
     }

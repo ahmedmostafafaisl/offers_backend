@@ -58,7 +58,7 @@
             <i class="bi bi-box me-2"></i> {{ __('dashboard.plans') }}
         </a>
 
- 
+
         <a class="nav-link {{ request()->routeIs('dashboard.subscriptions.*') ? 'active' : '' }}"
             href="{{ route('dashboard.subscriptions.index') }}">
             <i class="bi bi-credit-card-2-front me-2"></i> {{ __('dashboard.subscriptions') }}
@@ -76,12 +76,12 @@
             <i class="bi bi-exclamation-circle me-2"></i> {{ __('dashboard.offer_complaints') }}
         </a>
 
-        <hr class="my-3">
+        {{-- <hr class="my-3"> --}}
 
-        <a class="nav-link {{ request()->routeIs('dashboard.pending-profile-verifications.*') ? 'active' : '' }}"
+        {{-- <a class="nav-link {{ request()->routeIs('dashboard.pending-profile-verifications.*') ? 'active' : '' }}"
             href="{{ route('dashboard.pending-profile-verifications.index') }}">
             <i class="bi bi-patch-question me-2"></i> {{ __('dashboard.pending_verifications') }}
-        </a>
+        </a> --}}
 
         <hr class="my-3">
 

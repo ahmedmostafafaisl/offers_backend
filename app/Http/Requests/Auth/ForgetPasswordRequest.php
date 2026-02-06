@@ -14,8 +14,8 @@ class ForgetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required_without:phone|email|exists:users,email',
-            'phone' => 'required_without:email|string|exists:users,phone',
+            'email' => 'required|email|exists:users,email',
+            'old_password' => 'required|string|min:6',
             'new_password' => 'required|string|min:6|confirmed',
         ];
     }

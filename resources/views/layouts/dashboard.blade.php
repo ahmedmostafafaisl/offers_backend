@@ -110,6 +110,51 @@ $isRtl = $locale === 'ar';
         text-align: left !important;
     }
 </style>
+<style>
+    /* ✅ prevent any page from breaking width */
+    .flex-grow-1 {
+        min-width: 0;
+    }
+
+    main {
+        min-width: 0;
+        overflow-x: auto;
+    }
+
+    /* ✅ tables always responsive */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    /* ✅ prevent any image/svg from forcing layout */
+    img,
+    svg,
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* ✅ fix huge icons issue (like your big arrow) */
+    .bi {
+        font-size: 1rem !important;
+        line-height: 1;
+    }
+
+    .btn .bi {
+        font-size: 1rem !important;
+    }
+
+    .pagination .page-link {
+        line-height: 1.2;
+    }
+
+    
+</style>
 
 </head>
 

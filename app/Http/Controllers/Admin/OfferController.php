@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Offer\OfferResource;
@@ -41,7 +42,12 @@ class OfferController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->id();
         $offer = $this->offerRepository->store($data);
-        event(new \App\Events\OfferCreated($offer));
+        try {
+            event(new \App\Events\OfferCreated($offer));
+        } catch (\Exception $e) {
+            Log::error('Failed to dispatch SendOfferCreatedNotification job: ' . $e->getMessage());
+        }
+
         return new OfferResource($offer);
     }
 

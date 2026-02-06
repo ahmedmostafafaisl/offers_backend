@@ -24,7 +24,6 @@ class NewOfferNotification extends Notification
     public function toDatabase($notifiable): array
     {
         // ✅ language text
-        // لو عندك locale للعميل استخدمها، لو مش موجود هنستخدم العربية افتراضي
         $locale = $notifiable->locale ?? 'ar';
 
         $title = $locale === 'ar' ? 'تم إضافة عرض جديد' : 'New offer added';

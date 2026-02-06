@@ -96,6 +96,10 @@ return [
     'cancel' => 'إلغاء',
     'show' => 'عرض',
 
+    'quarterly_price' => 'السعر ربع السنوي',
+    'semi_annual_price' => 'السعر نصف السنوي',
+    'annual_price' => 'السعر السنوي',
+
 
 
 

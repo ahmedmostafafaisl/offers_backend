@@ -34,6 +34,7 @@ class Offer extends Model
         'city_en',
         'governorate_en',
         'country_en',
+        'expiring_notified',
     ];
 
     public function user()

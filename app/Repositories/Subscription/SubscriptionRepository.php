@@ -38,7 +38,12 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
             $plan = Plan::findOrFail($data['plan_id']);
 
             $type = $data['type']; // monthly | annually
-            $amount = $type === 'annually' ? (float)$plan->annually_price : (float)$plan->monthly_price;
+            $amount = match ($type) {
+                'quarterly'   => (float)$plan->quarterly_price,
+                'semi_annual' => (float)$plan->semi_annual_price,
+                'annual'      => (float)$plan->annual_price,
+                default       => throw new \InvalidArgumentException('Invalid subscription type'),
+            };
 
             // ✅ 1) create subscription as pending (inactive)
             $subscription = Subscription::create([
@@ -46,7 +51,7 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
                 'plan_id' => $plan->id,
                 'type' => $type,
                 'start_date' => $data['start_date'] ?? now()->toDateString(),
-                'expiration_date' => $data['expiration_date'] ?? now()->addMonth()->toDateString(), // عدل حسب type
+                'expiration_date' => $data['expiration_date']  ?? null,
                 'is_active' => 0,
             ]);
 

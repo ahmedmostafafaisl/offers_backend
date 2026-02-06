@@ -15,6 +15,7 @@ use App\Http\Requests\Profile\SwitchProfileRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Http\Requests\Profile\VerifyProfileOtpRequest;
 use App\Interfaces\Profile\ProfileRepositoryInterface;
+use App\Http\Requests\Profile\LinkProfileByCredentialsRequest;
 
 class ProfileController extends Controller
 {
@@ -119,7 +120,12 @@ class ProfileController extends Controller
         );
 
         $newUser = $out['user'];
-
+        if (!$newUser->is_active) {
+            return response()->json([
+                'status' => false,
+                'message' => 'The target profile is deactivated.',
+            ], 403);
+        }
         // ✅ Set authenticated user for THIS request context
         Auth::setUser($newUser);
 
@@ -134,8 +140,8 @@ class ProfileController extends Controller
     public function linkedProfiles(Request $request)
     {
         $user = $request->user();
-
-        $profiles = \App\Models\UserProfile::query()
+        // dd($user);
+        $profiles = UserProfile::query()
             ->where('user_id', $user->id)
             ->where('type', '!=', $user->type)
             ->latest('id')
@@ -145,5 +151,27 @@ class ProfileController extends Controller
             'status'   => true,
             'profiles' => ProfileResource::collection($profiles),
         ]);
+    }
+
+    //  new method to find profile by credentials (email + password) and link it to current user
+
+
+    public function linkByCredentials(LinkProfileByCredentialsRequest $request)
+    {
+        $result = $this->profiles->linkByCredentials(
+            $request->user(),
+            $request->type,
+            $request->email,
+            $request->password
+        );
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Profiles linked successfully (both directions).',
+            'profiles' => [
+                'requester_profile' => new ProfileResource($result['requester_profile']),
+                'target_profile'    => new ProfileResource($result['target_profile']),
+            ],
+        ], 201);
     }
 }

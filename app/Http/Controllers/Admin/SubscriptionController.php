@@ -30,9 +30,12 @@ class SubscriptionController extends Controller
         $user = auth()->user();
 
         $startDate = Carbon::now();
-        $expirationDate = $request->type === 'monthly'
-            ? $startDate->copy()->addMonth()
-            : $startDate->copy()->addYear();
+        $expirationDate = match ($request->type) {
+            'quarterly'   => $startDate->copy()->addMonths(3),
+            'semi_annual' => $startDate->copy()->addMonths(6),
+            'annual'      => $startDate->copy()->addYear(),
+            default       => throw new \InvalidArgumentException('Invalid subscription type'),
+        };
 
         $subscriptionData = [
             'user_id' => $user->id,

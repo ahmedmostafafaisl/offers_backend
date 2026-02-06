@@ -18,8 +18,9 @@ class PlanResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'monthly_price' => $this->monthly_price,
-            'annually_price' => $this->annually_price,
+            'quarterly_price' => $this->quarterly_price,
+            'semi_annual_price' => $this->semi_annual_price,
+            'annual_price' => $this->annual_price,
             'features' => FeatureResource::collection($this->whenLoaded('features')),
             'subscription_type' => $this->when(isset($this->subscription_type), $this->subscription_type),
             'subscription_price' => $this->when(isset($this->subscription_price), $this->subscription_price),

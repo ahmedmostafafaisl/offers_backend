@@ -16,8 +16,9 @@ class StorePlanRequest extends FormRequest
     {
         return [
             'name' => 'nullable|string|max:255',
-            'monthly_price' => 'nullable|numeric|min:0',
-            'annually_price' => 'nullable|numeric|min:0',
+            'quarterly_price' => 'nullable|numeric|min:0',
+            'semi_annual_price' => 'nullable|numeric|min:0',
+            'annual_price' => 'nullable|numeric|min:0',
             'features' => 'nullable|array',
             'features.*.name' => 'required_with:features|string|max:255',
             'features.*.description' => 'nullable|string',

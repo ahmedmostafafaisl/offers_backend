@@ -18,6 +18,7 @@ use App\Http\Requests\Auth\{
     LoginRequest
 };
 use App\Http\Resources\User\UserResource;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -36,18 +37,31 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-        // Send OTP via email
-        if (!empty($user->email)) {
-            $this->sendOtpMail($user->email, $user->otp);
+
+
+        try {
+            // Send OTP via email
+            if (!empty($user->email)) {
+                $this->sendOtpMail($user->email, $user->otp);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send OTP email: ' . $e->getMessage());
+            // return response()->json([
+            //     'status' => false,
+            //     'message' => 'Failed to send OTP email. Please try again later.',
+            // ], 500);
         }
-
         // 🔑 Create Sanctum token
-
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'status' => true,
             'message' => 'Customer registered successfully. OTP sent to email.',
-
+            'data' => [
+                'user' => new UserResource($user),
+                'token' => $token,
+                'token_type' => 'Bearer',
+            ],
         ]);
     }
 
@@ -63,16 +77,30 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-        // Send OTP via email
-        if (!empty($user->email)) {
-            $this->sendOtpMail($user->email, $user->otp);
+        try {
+            // Send OTP via email
+            if (!empty($user->email)) {
+                $this->sendOtpMail($user->email, $user->otp);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send OTP email: ' . $e->getMessage());
+            // return response()->json([
+            //     'status' => false,
+            //     'message' => 'Failed to send OTP email. Please try again later.',
+            // ], 500);
         }
 
         // 🔑 Create Sanctum token
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'status' => true,
             'message' => 'Provider registered successfully. OTP sent to email.',
+            'data' => [
+                'user' => new UserResource($user),
+                'token' => $token,
+                'token_type' => 'Bearer',
+            ],
 
         ]);
     }
@@ -86,7 +114,18 @@ class AuthController extends Controller
         $user->otp = rand(100000, 999999);
         $user->save();
 
-        $this->sendOtpMail($user->email, $user->otp);
+        try {
+            // Send OTP via email
+            if (!empty($user->email)) {
+                $this->sendOtpMail($user->email, $user->otp);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send OTP email: ' . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to send OTP email. Please try again later.',
+            ], 500);
+        }
 
         return response()->json([
             'status' => true,
@@ -149,10 +188,19 @@ class AuthController extends Controller
     /**
      * 🔁 Forget Password
      */
+
     public function forgetPassword(ForgetPasswordRequest $request)
     {
-        $user = $this->findUser($request);
+        $user = $this->findUser($request); // غالبًا بترجع user بالإيميل
 
+        // ✅ check old password
+        if (!Hash::check($request->old_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'old_password' => ['Old password is incorrect.'],
+            ]);
+        }
+
+        // ✅ update password
         $user->password = Hash::make($request->new_password);
         $user->save();
 
@@ -162,13 +210,13 @@ class AuthController extends Controller
         ]);
     }
 
+
     /**
      * 🧩 Helper to find user by email or phone
      */
     private function findUser(Request $request)
     {
         return User::where('email', $request->email)
-            // ->orWhere('phone', $request->phone)
             ->firstOrFail();
     }
 
@@ -187,11 +235,15 @@ class AuthController extends Controller
     {
 
         $user = User::where('email', $request->email)
-            ->whereNotNull('email_verified_at')
-            // ->orWhere('phone', $request->phone)
             ->with('socialMedia')
             ->first();
 
+        if (!$user->is_active) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Your account has been deactivated.',
+            ], 404);
+        }
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => false,
@@ -202,12 +254,8 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
         if ($user->type === 'provider') {
             $isCompleteInformation = !(
-                empty($user->photo) ||
                 empty($user->address_ar) ||
-                empty($user->address_en) ||
-
-                empty($user->store_number)
-
+                empty($user->address_en)
             );
         } else {
             $isCompleteInformation = !(
@@ -276,7 +324,63 @@ class AuthController extends Controller
         $user->update([
             'fcm_token' => $request->input('fcm_token'),
         ]);
+        return response()->json([
+            'status' => true,
+            'message' => 'FCM token updated successfully.',
+        ]);
+    }
 
-        return $this->setCode(code: 200)->setData([])->setMessage('FCM token updated successfully.')->send();
+    // Deactivate account
+    public function deactivateAccount(Request $request)
+    {
+        $user = $request->user();
+        if (!Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'password' => ['Password is incorrect.'],
+            ]);
+        }
+
+
+        $user->is_active = false;
+        $user->save();
+        // Optionally, you can also revoke all tokens to log the user out from all devices
+        $user->tokens()->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Account deactivated successfully.',
+        ]);
+    }
+
+    // Activate account
+    public function activateAccount(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string',
+        ]);
+        $user = $this->findUser($request);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
+        if ($user->is_active) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Account is already active.',
+            ], 400);
+        }
+        if (!Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'password' => ['Password is incorrect.'],
+            ]);
+        }
+        $user->is_active = true;
+        $user->save();
+        return response()->json([
+            'status' => true,
+            'message' => 'Account activated successfully.',
+        ]);
     }
 }

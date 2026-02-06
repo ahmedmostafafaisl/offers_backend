@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\PendingProfileVerification;
 use Illuminate\Validation\ValidationException;
 use App\Interfaces\Profile\ProfileRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class ProfileRepository implements ProfileRepositoryInterface
 {
@@ -371,5 +372,149 @@ class ProfileRepository implements ProfileRepositoryInterface
             'token' => $newToken,
             'user'  => $targetUser,
         ];
+    }
+
+    // new method to link by credentials (email + password) instead of OTP
+
+    public function linkByCredentials(User $requester, string $type, string $email, string $password): array
+    {
+        $target = User::where('email', $email)->first();
+
+        if (!$target) {
+            throw ValidationException::withMessages([
+                'email' => ['Account not found.'],
+            ]);
+        }
+
+        if ($target->id === $requester->id) {
+            throw ValidationException::withMessages([
+                'email' => ['You cannot link to your own account.'],
+            ]);
+        }
+
+        // ✅ check password
+        if (!Hash::check($password, $target->password)) {
+            throw ValidationException::withMessages([
+                'password' => ['Invalid email or password.'],
+            ]);
+        }
+
+        // ✅ Only provider/customer can be linked (employee ممنوع)
+        if (!in_array($requester->type, ['provider', 'customer'], true)) {
+            throw ValidationException::withMessages([
+                'type' => ['Only provider/customer accounts can link profiles.'],
+            ]);
+        }
+
+        if (!in_array($target->type, ['provider', 'customer'], true)) {
+            throw ValidationException::withMessages([
+                'email' => ['Target account must be provider/customer.'],
+            ]);
+        }
+
+        // ✅ must be different types (provider <-> customer)
+        if ($requester->type === $target->type) {
+            throw ValidationException::withMessages([
+                'type' => ['Linking requires different types (provider with customer only).'],
+            ]);
+        }
+
+        // ✅ optional: لو بتبعت type في الريكويست لازم يطابق نوع target الحقيقي
+        if (!empty($type) && $target->type !== $type) {
+            throw ValidationException::withMessages([
+                'type' => ['Target type does not match the requested type.'],
+            ]);
+        }
+
+        return DB::transaction(function () use ($requester, $target) {
+
+            // =========================================================
+            // ✅ One-to-one checks (قبل ما DB يضرب Unique error)
+            // =========================================================
+
+            // requester: هل عنده profile مربوط؟
+            $requesterProfile = UserProfile::where('user_id', $requester->id)->first();
+            if ($requesterProfile && !is_null($requesterProfile->linked_user_id)) {
+                throw ValidationException::withMessages([
+                    'email' => ['This account is already linked to another account.'],
+                ]);
+            }
+
+            // requester: هل هو مربوط كـ linked_user_id لحد تاني؟
+            $requesterUsedAsLinked = UserProfile::where('linked_user_id', $requester->id)->exists();
+            if ($requesterUsedAsLinked) {
+                throw ValidationException::withMessages([
+                    'email' => ['This account is already linked (as a target) to another account.'],
+                ]);
+            }
+
+            // target: هل عنده profile مربوط؟
+            $targetProfile = UserProfile::where('user_id', $target->id)->first();
+            if ($targetProfile && !is_null($targetProfile->linked_user_id)) {
+                throw ValidationException::withMessages([
+                    'email' => ['Target account is already linked to another account.'],
+                ]);
+            }
+
+            // target: هل هو مربوط كـ linked_user_id لحد تاني؟
+            $targetUsedAsLinked = UserProfile::where('linked_user_id', $target->id)->exists();
+            if ($targetUsedAsLinked) {
+                throw ValidationException::withMessages([
+                    'email' => ['Target account is already linked (as a target) to another account.'],
+                ]);
+            }
+
+            // =========================================================
+            // ✅ Save profiles (type = actual users.type)
+            // =========================================================
+
+            // requester profile (user_id unique)
+            $requesterProfile = UserProfile::updateOrCreate(
+                ['user_id' => $requester->id],
+                [
+                    'type' => $target->type,
+                    'linked_user_id' => $target->id,
+
+                    // snapshot from target (optional)
+                    'name' => $target->name,
+                    'phone' => $target->phone,
+                    'photo' => $target->photo,
+                    'country' => $target->country,
+                    'city' => $target->city,
+                    'whats_app_number' => $target->whats_app_number,
+                    'store_number' => $target->store_number,
+                    'store_establish_date' => $target->store_establish_date,
+                    'tax_number' => $target->tax_number,
+                    'commercial_registration' => $target->commercial_registration,
+                ]
+            );
+
+            // target profile (user_id unique)
+            $targetProfile = UserProfile::updateOrCreate(
+                ['user_id' => $target->id],
+                [
+                    'type' => $requester->type,
+                    'linked_user_id' => $requester->id,
+
+                    // snapshot from requester (optional)
+                    'name' => $requester->name,
+                    'phone' => $requester->phone,
+                    'photo' => $requester->photo,
+                    'country' => $requester->country,
+                    'city' => $requester->city,
+                    'whats_app_number' => $requester->whats_app_number,
+                    'store_number' => $requester->store_number,
+                    'store_establish_date' => $requester->store_establish_date,
+                    'tax_number' => $requester->tax_number,
+                    'commercial_registration' => $requester->commercial_registration,
+                ]
+            );
+
+            return [
+                'requester_profile' => $requesterProfile->fresh(),
+                'target_profile'    => $targetProfile->fresh(),
+                'target_user'       => $target,
+            ];
+        });
     }
 }

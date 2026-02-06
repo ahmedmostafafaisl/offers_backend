@@ -5,9 +5,8 @@ namespace App\Listeners;
 use App\Events\OfferCreated;
 use App\Models\User;
 use App\Notifications\NewOfferNotification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendNewOfferToCustomers implements ShouldQueue
+class SendNewOfferToCustomers
 {
     public function handle(OfferCreated $event): void
     {

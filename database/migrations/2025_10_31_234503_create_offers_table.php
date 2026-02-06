@@ -41,7 +41,7 @@ return new class extends Migration
             $table->string('city_en')->nullable();
             $table->string('governorate_en')->nullable();
             $table->string('country_en')->nullable();
-
+            $table->boolean('expiring_notified')->default(false);
 
 
             $table->timestamps();

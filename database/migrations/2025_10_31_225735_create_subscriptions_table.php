@@ -17,8 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('plan_id');
             $table->date('start_date');
             $table->date('expiration_date');
-            $table->enum('type', ['monthly', 'annually']);
+            $table->enum('type', ['quarterly', 'semi_annual', 'annual']);
             $table->boolean('is_active')->default(true);
+            $table->boolean('expiring_notified')->default(false);
+            $table->boolean('expired_notified')->default(false);
             $table->timestamps();
         });
     }

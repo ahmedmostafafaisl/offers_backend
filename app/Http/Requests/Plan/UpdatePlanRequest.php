@@ -23,8 +23,9 @@ class UpdatePlanRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|max:255',
-            'monthly_price' => 'sometimes|numeric|min:0',
-            'annually_price' => 'sometimes|numeric|min:0',
+            'quarterly_price' => 'sometimes|numeric|min:0',
+            'semi_annual_price' => 'sometimes|numeric|min:0',
+            'annual_price' => 'sometimes|numeric|min:0',
             'features' => 'nullable|array',
             'features.*.name' => 'required_with:features|string|max:255',
             'features.*.description' => 'nullable|string',

@@ -20,8 +20,9 @@
 <div class="col-md-2">
     <select class="form-select" name="type">
         <option value="">All Types</option>
-        <option value="monthly" @selected(request('type') === 'monthly')>monthly</option>
-        <option value="annually" @selected(request('type') === 'annually')>annually</option>
+        <option value="quarterly" @selected(request('type') === 'quarterly')>quarterly</option>
+        <option value="semi_annual" @selected(request('type') === 'semi_annual')>semi-annual</option>
+        <option value="annual" @selected(request('type') === 'annual')>annual</option>
     </select>
 </div>
 

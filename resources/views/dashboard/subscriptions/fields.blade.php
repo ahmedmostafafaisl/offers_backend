@@ -21,8 +21,9 @@
 <div class="col-md-3">
     <label class="form-label">Type</label>
     <select name="type" class="form-select" required>
-        <option value="monthly" @selected(old('type', $row->type ?? '') === 'monthly')>monthly</option>
-        <option value="annually" @selected(old('type', $row->type ?? '') === 'annually')>annually</option>
+        <option value="quarterly" @selected(old('type', $row->type ?? '') === 'quarterly')>quarterly</option>
+        <option value="semi_annual" @selected(old('type', $row->type ?? '') === 'semi_annual')>semi-annual</option>
+        <option value="annual" @selected(old('type', $row->type ?? '') === 'annual')>annual</option>
     </select>
 </div>
 

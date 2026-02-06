@@ -13,11 +13,22 @@ use App\Models\{FavoriteOffer, Offer, OfferImage, OfferSocialMedia};
 class OfferRepository implements OfferRepositoryInterface
 {
 
+
+
+
+
     public function all($userId = null, $categoryId = null, $city = null, $page = 1, $pageSize = 10)
     {
         $authUser = auth('sanctum')->user();
-        // dd($authUser);
-        $query = Offer::with(['images', 'socialMedia']);
+
+        // ✅ base query: only active + not expired offers
+        $query = Offer::query()
+            ->with(['images', 'socialMedia'])
+            ->where('is_active', 1)
+            ->where(function ($qq) {
+                $qq->whereNull('expiration_date')
+                    ->orWhere('expiration_date', '>=', Carbon::now());
+            });
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
@@ -27,8 +38,24 @@ class OfferRepository implements OfferRepositoryInterface
             $query->where('user_id', $userId);
         }
 
-        // ✅ Filter by auth user's city/country if logged in
-        if ($authUser) {
+        // ✅ normalize city
+        $city = is_string($city) ? trim($city) : $city;
+        $cityLower = is_string($city) ? strtolower($city) : null;
+
+        // ✅ 1) city=all => ignore auth filter & ignore city filter
+        if ($cityLower === 'all') {
+            // do nothing (return all active not expired)
+        }
+        // ✅ 2) specific city => has priority (ignore auth filter)
+        elseif (!empty($city)) {
+            $query->where(function ($q) use ($city) {
+                $q->where('city_ar', $city)
+                    ->orWhere('city_en', $city);
+            });
+        }
+        // ✅ 3) otherwise apply auth filter (if logged in)
+        elseif ($authUser) {
+
             $userCityValues = array_values(array_filter([
                 $authUser->city,
                 $authUser->city_ar,
@@ -36,13 +63,12 @@ class OfferRepository implements OfferRepositoryInterface
             ]));
 
             $userCountryValues = array_values(array_filter([
-                $authUser->governorate_ar,
-                $authUser->governorate_en,
+                $authUser->country_ar ?? null,
+                $authUser->country_en ?? null,
             ]));
 
             $query->where(function ($q) use ($userCityValues, $userCountryValues) {
 
-                // City match: user.city|city_ar|city_en against offer.city_ar|city_en
                 if (!empty($userCityValues)) {
                     $q->where(function ($qq) use ($userCityValues) {
                         $qq->whereIn('city_ar', $userCityValues)
@@ -50,9 +76,7 @@ class OfferRepository implements OfferRepositoryInterface
                     });
                 }
 
-                // OR Country match: user.country_ar|country_en against offer.country_ar|country_en
                 if (!empty($userCountryValues)) {
-                    // لو فيه City شرط فوق، نخليه OR
                     $method = !empty($userCityValues) ? 'orWhere' : 'where';
 
                     $q->{$method}(function ($qq) use ($userCountryValues) {
@@ -63,17 +87,11 @@ class OfferRepository implements OfferRepositoryInterface
             });
         }
 
-
-        // ✅ NEW: filter by city (matches city_ar OR city_en)
-        if ($city) {
-            $query->where(function ($q) use ($city) {
-                $q->where('city_ar', $city)
-                    ->orWhere('city_en', $city);
-            });
-        }
-
         return $query->paginate($pageSize, ['*'], 'page', $page);
     }
+
+
+
 
 
 

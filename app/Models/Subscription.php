@@ -16,6 +16,8 @@ class Subscription extends Model
         'expiration_date',
         'type',
         'is_active',
+        'expiring_notified',
+        'expired_notified',
     ];
 
     protected $casts = [

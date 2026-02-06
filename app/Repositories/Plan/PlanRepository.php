@@ -3,7 +3,6 @@
 namespace App\Repositories\Plan;
 
 use App\Models\Plan;
-use Illuminate\Support\Facades\Auth;
 use App\Interfaces\Plan\PlanRepositoryInterface;
 
 class PlanRepository implements PlanRepositoryInterface
@@ -12,13 +11,12 @@ class PlanRepository implements PlanRepositoryInterface
     {
         $user = auth('sanctum')->user();
 
-        // ✅ Fetch all plans
         $plans = Plan::with('features')->get();
 
         $subscribedPlan = null;
         $latestSubscription = null;
+
         if ($user) {
-            // ✅ Get user's latest subscription with type (monthly/annually)
             $latestSubscription = $user->subscriptions()
                 ->latest('start_date')
                 ->with('plan.features')
@@ -26,28 +24,27 @@ class PlanRepository implements PlanRepositoryInterface
 
             if ($latestSubscription && $latestSubscription->plan) {
                 $plan = $latestSubscription->plan;
-                $type = $latestSubscription->type; // monthly or annually
+                $type = $latestSubscription->type; // quarterly | semi_annual | annual
 
-                // Add a field for the price type
                 $plan->subscription_type = $type;
 
-                // Add the price based on type
-                $plan->subscription_price = $type === 'annually'
-                    ? $plan->annually_price
-                    : $plan->monthly_price;
+                $plan->subscription_price = match ($type) {
+                    'annual' => $plan->annual_price,
+                    'semi_annual' => $plan->semi_annual_price,
+                    'quarterly' => $plan->quarterly_price,
+                    default => 0,
+                };
 
                 $subscribedPlan = $plan;
             }
         }
 
         return [
-            'plans' => $plans,
+            'plans' =>  $plans,
             'subscribed_plan' => $subscribedPlan,
             'expiration_date' => $latestSubscription ? $latestSubscription->expiration_date : null,
         ];
     }
-
-
 
     public function find($id)
     {

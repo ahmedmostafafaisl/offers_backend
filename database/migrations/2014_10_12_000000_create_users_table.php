@@ -48,6 +48,9 @@ return new class extends Migration
             $table->string('location_details_ar')->nullable();
             $table->string('location_name_en')->nullable();
             $table->string('location_details_en')->nullable();
+
+            // user status
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

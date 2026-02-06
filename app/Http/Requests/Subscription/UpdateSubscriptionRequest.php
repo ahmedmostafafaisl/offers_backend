@@ -18,7 +18,7 @@ class UpdateSubscriptionRequest extends FormRequest
             'plan_id' => 'sometimes|exists:plans,id',
             'start_date' => 'sometimes|date',
             'expiration_date' => 'sometimes|date|after:start_date',
-            'type' => 'sometimes|in:monthly,annually',
+            'type' => 'sometimes|in:quarterly,semi_annual,annual',
         ];
     }
 }

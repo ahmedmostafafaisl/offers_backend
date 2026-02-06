@@ -1,13 +1,13 @@
 {{-- resources/views/dashboard/plans/partials/form.blade.php --}}
 @php
-    $isEdit = isset($row);
+$isEdit = isset($row);
 
-    // ✅ translations for JS (no blade inside template literal)
-    $t = [
-        'feature_name' => __('dashboard.feature_name'),
-        'feature_description' => __('dashboard.feature_description'),
-        'add_feature' => __('dashboard.add_feature'),
-    ];
+// ✅ translations for JS (no blade inside template literal)
+$t = [
+    'feature_name' => __('dashboard.feature_name'),
+    'feature_description' => __('dashboard.feature_description'),
+    'add_feature' => __('dashboard.add_feature'),
+];
 @endphp
 
 <div class="row g-3">
@@ -18,18 +18,24 @@
     </div>
 
     <div class="col-md-3">
-        <label class="form-label">{{ __('dashboard.monthly_price') }}</label>
-        <input name="monthly_price" type="number" step="0.01" class="form-control"
-               value="{{ old('monthly_price', $row->monthly_price ?? 0) }}" required>
-        @error('monthly_price') <div class="text-danger small">{{ $message }}</div> @enderror
+        <label class="form-label">{{ __('dashboard.quarterly_price') }}</label>
+        <input name="quarterly_price" type="number" step="0.01" class="form-control"
+               value="{{ old('quarterly_price', $row->quarterly_price ?? 0) }}" required>
+        @error('quarterly_price') <div class="text-danger small">{{ $message }}</div> @enderror
     </div>
-
     <div class="col-md-3">
-        <label class="form-label">{{ __('dashboard.annually_price') }}</label>
-        <input name="annually_price" type="number" step="0.01" class="form-control"
-               value="{{ old('annually_price', $row->annually_price ?? 0) }}" required>
-        @error('annually_price') <div class="text-danger small">{{ $message }}</div> @enderror
+        <label class="form-label">{{ __('dashboard.semi_annual_price') }}</label>
+        <input name="semi_annual_price" type="number" step="0.01" class="form-control"
+               value="{{ old('semi_annual_price', $row->semi_annual_price ?? 0) }}" required>
+        @error('semi_annual_price') <div class="text-danger small">{{ $message }}</div> @enderror
     </div>
+<div class="col-md-3">
+    <label class="form-label">{{ __('dashboard.annual_price') }}</label>
+    <input name="annual_price" type="number" step="0.01" class="form-control"
+        value="{{ old('annual_price', $row->annual_price ?? 0) }}" required>
+    @error('annual_price') <div class="text-danger small">{{ $message }}</div> @enderror
+</div>
+
 
     <div class="col-12">
         <hr>
@@ -40,10 +46,10 @@
 
         <div id="featuresWrap" class="d-flex flex-column gap-2">
             @php
-                $features = old('features', $isEdit ? $row->features->toArray() : []);
-                if (empty($features)) {
-                    $features = [['id' => null, 'name' => '', 'description' => '']];
-                }
+$features = old('features', $isEdit ? $row->features->toArray() : []);
+if (empty($features)) {
+    $features = [['id' => null, 'name' => '', 'description' => '']];
+}
             @endphp
 
             @foreach ($features as $i => $f)
@@ -55,7 +61,7 @@
                         <div class="col-md-4">
                             <label class="form-label">{{ __('dashboard.feature_name') }}</label>
                             <input name="features[{{ $i }}][name]" class="form-control"
-                                   value="{{ $f['name'] ?? '' }}" required>
+                                   value="{{ $f['name'] ?? '' }}" >
                             @error("features.$i.name") <div class="text-danger small">{{ $message }}</div> @enderror
                         </div>
 

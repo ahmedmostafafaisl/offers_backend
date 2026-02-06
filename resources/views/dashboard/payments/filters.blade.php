@@ -1,29 +1,22 @@
 <div class="col-md-3">
-    <select class="form-select" name="category_id">
-        <option value="">All Categories</option>
-        @foreach($categories as $c)
-            <option value="{{ $c->id }}" @selected((string) request('category_id') === (string) $c->id)>{{ $c->name }}</option>
-        @endforeach
+    <input name="reference_id" value="{{ request('reference_id') }}" class="form-control"
+        placeholder="{{ __('dashboard.reference_id') }}">
+</div>
+
+<div class="col-md-2">
+    <input name="phone" value="{{ request('phone') }}" class="form-control" placeholder="{{ __('dashboard.phone') }}">
+</div>
+
+<div class="col-md-2">
+    <select name="status" class="form-select">
+        <option value="">{{ __('dashboard.all') }}</option>
+        <option value="pending" @selected(request('status') === 'pending')>pending</option>
+        <option value="paid" @selected(request('status') === 'paid')>paid</option>
+        <option value="failed" @selected(request('status') === 'failed')>failed</option>
     </select>
 </div>
 
-<div class="col-md-3">
-    <select class="form-select" name="user_id">
-        <option value="">All Providers</option>
-        @foreach($providers as $p)
-            <option value="{{ $p->id }}" @selected((string) request('user_id') === (string) $p->id)>{{ $p->name }}</option>
-        @endforeach
-    </select>
-</div>
-
-<div class="col-md-3">
-    <select class="form-select" name="is_active">
-        <option value="">All Status</option>
-        <option value="1" @selected(request('is_active') === '1')>Active</option>
-        <option value="0" @selected(request('is_active') === '0')>Inactive</option>
-    </select>
-</div>
-
-<div class="col-md-3">
-    <input class="form-control" name="city" value="{{ request('city') }}" placeholder="City (AR or EN)">
+<div class="col-md-2">
+    <input name="payment_type" value="{{ request('payment_type') }}" class="form-control"
+        placeholder="{{ __('dashboard.payment_type') }}">
 </div>

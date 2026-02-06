@@ -10,8 +10,9 @@ class Plan extends Model
     use HasFactory;
     protected $fillable = [
         'name',
-        'monthly_price',
-        'annually_price',
+        'quarterly_price',
+        'semi_annual_price',
+        'annual_price',
     ];
 
     public function features()

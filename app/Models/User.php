@@ -46,6 +46,7 @@ class User extends Authenticatable
         'location_details_ar',
         'location_name_en',
         'location_details_en',
+        'is_active',
     ];
 
     protected $hidden = [

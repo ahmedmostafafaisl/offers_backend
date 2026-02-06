@@ -15,12 +15,13 @@ class StorePlanRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'monthly_price' => 'required|numeric|min:0',
-            'annually_price' => 'required|numeric|min:0',
+            'quarterly_price' => 'nullable|numeric|min:0',
+            'semi_annual_price' => 'nullable|numeric|min:0',
+            'annual_price' => 'nullable|numeric|min:0',
 
             'features' => 'nullable|array',
             'features.*.id' => 'nullable|integer|exists:plan_features,id',
-            'features.*.name' => 'required_with:features|string|max:255',
+            'features.*.name' => 'nullable:features|string|max:255',
             'features.*.description' => 'nullable|string',
         ];
     }

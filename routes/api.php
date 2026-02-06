@@ -57,7 +57,8 @@ Route::prefix('auth')->group(function () {
     Route::post('verify-pin', [AuthController::class, 'verifyPinCode']);
     Route::post('forget-password', [AuthController::class, 'forgetPassword']);
     Route::post('login', [AuthController::class, 'login']);
-
+    //activate account
+    Route::post('activate', [AuthController::class, 'activateAccount']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
@@ -65,6 +66,8 @@ Route::prefix('auth')->group(function () {
         Route::post('refresh', [AuthController::class, 'refreshToken']);
         // update fcm token
         Route::post('update-fcm-token', [AuthController::class, 'updateFcmToken']);
+        // deactivate account
+        Route::post('deactivate', [AuthController::class, 'deactivateAccount']);
     });
 });
 
@@ -147,6 +150,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // switch
     Route::post('/me/switch-account', [ProfileController::class, 'switchAccount'])->middleware('throttle:10,1');
     Route::get('/me/linked-profiles', [ProfileController::class, 'linkedProfiles']);
+});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/profiles/link-by-credentials', [ProfileController::class, 'linkByCredentials']);
 });
 
 

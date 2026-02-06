@@ -97,4 +97,7 @@ return [
     'cancel' => 'Cancel',
     'show' => 'Show',
 
+    'quarterly_price' => 'Quarterly Price',
+    'semi_annual_price' => 'Semi-Annual Price',
+    'annual_price' => 'Annual Price',
 ];

@@ -16,7 +16,7 @@ class StoreSubscriptionRequest extends FormRequest
         return [
             'payment_type' => 'nullable|string',
             'plan_id' => 'required|exists:plans,id',
-            'type' => 'required|in:monthly,annually',
+            'type' => 'required|in:quarterly,semi_annual,annual',
         ];
     }
 }

@@ -28,4 +28,6 @@ interface ProfileRepositoryInterface
     public function startLink(User $requester, string $phone, string $type): bool;
     public function verifyAndLink(User $requester, string $phone, string $type, string $otp): array;
     public function switchAccount(User $currentUser, string $toType, bool $revokeCurrentToken = true): array;
+    // new method to link by credentials (email + password) instead of OTP
+    public function linkByCredentials(User $requester, string $type, string $email, string $password): array;
 }
