@@ -20,6 +20,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/orood-plus/support-privacy', function () {
+    return view('legal.orood-plus-support-privacy');
+})->name('orood-plus.support-privacy');
+
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

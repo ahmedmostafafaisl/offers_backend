@@ -17,3 +17,9 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+storage/*.json
+/public/storage
+/storage/framework
+
+
+

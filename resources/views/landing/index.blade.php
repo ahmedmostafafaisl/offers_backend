@@ -44,6 +44,11 @@
                             {{ app()->getLocale() === 'ar' ? 'تواصل' : 'Contact' }}
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('orood-plus.support-privacy') }}">
+                            {{ app()->getLocale() === 'ar' ? 'الدعم والخصوصية' : 'Support & Privacy' }}
+                        </a>
+                    </li>
                 </ul>
 
                 <div class="d-flex align-items-center gap-2">
@@ -409,6 +414,8 @@
                         <a href="#offers" class="footer-link">{{ app()->getLocale() === 'ar' ? 'العروض' : 'Offers' }}</a>
                         <a href="#categories"
                             class="footer-link">{{ app()->getLocale() === 'ar' ? 'التصنيفات' : 'Categories' }}</a>
+                        <a href="{{ route('orood-plus.support-privacy') }}"
+                            class="footer-link">{{ app()->getLocale() === 'ar' ? 'الدعم والخصوصية' : 'Support & Privacy' }}</a>
                     </div>
                 </div>
 
