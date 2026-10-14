@@ -17,25 +17,53 @@ $t = [
         @error('name') <div class="text-danger small">{{ $message }}</div> @enderror
     </div>
 
-    <div class="col-md-3">
-        <label class="form-label">{{ __('dashboard.quarterly_price') }}</label>
-        <input name="quarterly_price" type="number" step="0.01" class="form-control"
-               value="{{ old('quarterly_price', $row->quarterly_price ?? 0) }}" required>
-        @error('quarterly_price') <div class="text-danger small">{{ $message }}</div> @enderror
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">{{ __('dashboard.semi_annual_price') }}</label>
-        <input name="semi_annual_price" type="number" step="0.01" class="form-control"
-               value="{{ old('semi_annual_price', $row->semi_annual_price ?? 0) }}" required>
-        @error('semi_annual_price') <div class="text-danger small">{{ $message }}</div> @enderror
-    </div>
-<div class="col-md-3">
-    <label class="form-label">{{ __('dashboard.annual_price') }}</label>
-    <input name="annual_price" type="number" step="0.01" class="form-control"
-        value="{{ old('annual_price', $row->annual_price ?? 0) }}" required>
-    @error('annual_price') <div class="text-danger small">{{ $message }}</div> @enderror
-</div>
+    {{-- Plan billing types: choose one or more, and set a price for each chosen type --}}
+    <div class="col-12">
+        <label class="form-label fw-semibold">{{ __('dashboard.plan_types') }}</label>
+        <div class="text-muted small mb-2">{{ __('dashboard.plan_types_hint') }}</div>
 
+        @php
+            $typeLabels = [
+                'quarterly'   => __('dashboard.quarterly'),
+                'semi_annual' => __('dashboard.semi_annual'),
+                'annual'      => __('dashboard.annual'),
+            ];
+
+            // Which types are ticked: old input wins, then the stored prices (NULL = not offered)
+            $selectedTypes = old('types', collect(\App\Models\Plan::TYPES)
+                ->filter(fn ($col, $type) => $isEdit && $row->{$col} !== null)
+                ->keys()
+                ->all());
+        @endphp
+
+        <div class="row g-3" id="planTypes">
+            @foreach (\App\Models\Plan::TYPES as $type => $column)
+                @php $checked = in_array($type, (array) $selectedTypes, true); @endphp
+                <div class="col-md-4">
+                    <div class="card-soft p-3 h-100 planTypeCard">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input planTypeCheck" type="checkbox" name="types[]"
+                                   value="{{ $type }}" id="type_{{ $type }}" @checked($checked)>
+                            <label class="form-check-label fw-semibold" for="type_{{ $type }}">
+                                {{ $typeLabels[$type] }}
+                            </label>
+                        </div>
+
+                        <div class="input-group">
+                            <input name="{{ $column }}" type="number" step="0.01" min="0"
+                                   class="form-control planTypePrice"
+                                   placeholder="{{ __('dashboard.price') }}"
+                                   value="{{ old($column, $isEdit ? $row->{$column} : '') }}"
+                                   @disabled(!$checked)>
+                            <span class="input-group-text">{{ __('dashboard.currency') }}</span>
+                        </div>
+                        @error($column) <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        @error('types') <div class="text-danger small mt-2">{{ $message }}</div> @enderror
+    </div>
 
     <div class="col-12">
         <hr>
@@ -156,6 +184,25 @@ if (empty($features)) {
 
     // init count
     updateCount();
+})();
+
+// Plan types: enable the price input only for ticked types
+(function () {
+    document.querySelectorAll('.planTypeCard').forEach(function (card) {
+        const check = card.querySelector('.planTypeCheck');
+        const price = card.querySelector('.planTypePrice');
+
+        function sync() {
+            price.disabled = !check.checked;
+            price.required = check.checked;
+            card.style.opacity = check.checked ? '1' : '.6';
+            if (check.checked && !price.value) price.focus();
+        }
+
+        check.addEventListener('change', sync);
+        price.required = check.checked;
+        card.style.opacity = check.checked ? '1' : '.6';
+    });
 })();
 </script>
 @endpush
