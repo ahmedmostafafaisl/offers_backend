@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // ✅ Core
 use App\Http\Controllers\Dashboard\PlansController;
+use App\Http\Controllers\Dashboard\AnalyticsController;
 use App\Http\Controllers\Dashboard\RolesController;
 
 // ✅ Plans
@@ -36,6 +37,9 @@ use App\Http\Controllers\Dashboard\PendingProfileVerificationsController;
  * OPTIONAL: لو عايز تقفل الداش على admin roles فقط
  * Route::middleware(['role:super_admin|admin'])->group(function () { ... });
  */
+
+// Analytics (users growth & performance charts)
+Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics');
 
 // Users & Profiles
 Route::resource('users', UsersController::class);

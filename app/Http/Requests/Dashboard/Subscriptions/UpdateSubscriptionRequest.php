@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\Dashboard\Subscriptions;
 
+use App\Http\Requests\Concerns\ChecksPlanOffersType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSubscriptionRequest extends FormRequest
 {
+    use ChecksPlanOffersType;
+
     public function authorize(): bool
     {
         return true;

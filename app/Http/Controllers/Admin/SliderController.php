@@ -34,7 +34,7 @@ class SliderController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string',
+            'name' => 'nullable|string|max:255',
             'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'boolean',
         ]);
@@ -53,7 +53,7 @@ class SliderController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->validate([
-            'name' => 'sometimes|string',
+            'name' => 'sometimes|nullable|string|max:255',
             'image' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'sometimes|boolean',
         ]);

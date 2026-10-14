@@ -31,9 +31,9 @@
         return "
             <td>{$r->id}</td>
             <td class='fw-semibold'>" . e($r->name) . "</td>
-            <td>" . number_format((float) $r->quarterly_price, 2) . "</td>
-            <td>" . number_format((float) $r->semi_annual_price, 2) . "</td>
-            <td>" . number_format((float) $r->annual_price, 2) . "</td>
+            <td>" . ($r->quarterly_price !== null ? number_format((float) $r->quarterly_price, 2) : '—') . "</td>
+            <td>" . ($r->semi_annual_price !== null ? number_format((float) $r->semi_annual_price, 2) : '—') . "</td>
+            <td>" . ($r->annual_price !== null ? number_format((float) $r->annual_price, 2) : '—') . "</td>
             <td><span class='badge bg-light text-dark border'>{$featuresCount}</span></td>
             <td>" . optional($r->created_at)->format('Y-m-d') . "</td>
         ";

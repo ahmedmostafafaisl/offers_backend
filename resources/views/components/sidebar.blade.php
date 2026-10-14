@@ -19,6 +19,11 @@
             <i class="bi bi-house me-2"></i> {{ __('dashboard.overview') }}
         </a>
 
+        <a class="nav-link {{ request()->routeIs('dashboard.analytics') ? 'active' : '' }}"
+            href="{{ route('dashboard.analytics') }}">
+            <i class="bi bi-bar-chart-line me-2"></i> {{ __('dashboard.analytics') }}
+        </a>
+
         <a class="nav-link {{ request()->routeIs('dashboard.users.*') ? 'active' : '' }}"
             href="{{ route('dashboard.users.index') }}">
             <i class="bi bi-people me-2"></i> {{ __('dashboard.users') }}
@@ -76,7 +81,8 @@
             <i class="bi bi-exclamation-circle me-2"></i> {{ __('dashboard.offer_complaints') }}
         </a>
 
-        {{-- <hr class="my-3"> --}}
+        {{--
+        <hr class="my-3"> --}}
 
         {{-- <a class="nav-link {{ request()->routeIs('dashboard.pending-profile-verifications.*') ? 'active' : '' }}"
             href="{{ route('dashboard.pending-profile-verifications.index') }}">

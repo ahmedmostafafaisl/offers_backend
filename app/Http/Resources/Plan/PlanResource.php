@@ -21,6 +21,8 @@ class PlanResource extends JsonResource
             'quarterly_price' => $this->quarterly_price,
             'semi_annual_price' => $this->semi_annual_price,
             'annual_price' => $this->annual_price,
+            // only the billing types this plan offers, e.g. [{"type":"annual","price":99}]
+            'available_types' => $this->availableTypes(),
             'features' => FeatureResource::collection($this->whenLoaded('features')),
             'subscription_type' => $this->when(isset($this->subscription_type), $this->subscription_type),
             'subscription_price' => $this->when(isset($this->subscription_price), $this->subscription_price),

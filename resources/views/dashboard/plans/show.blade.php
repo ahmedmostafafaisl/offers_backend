@@ -39,15 +39,16 @@
                 <div class="fw-semibold">{{ $row->name }}</div>
             </div>
 
-            <div class="col-md-3">
-                <div class="text-muted small">{{ __('dashboard.monthly_price') }}</div>
-                <div class="fw-semibold">{{ number_format((float) $row->monthly_price, 2) }}</div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="text-muted small">{{ __('dashboard.annually_price') }}</div>
-                <div class="fw-semibold">{{ number_format((float) $row->annually_price, 2) }}</div>
-            </div>
+            @foreach (\App\Models\Plan::TYPES as $type => $column)
+                <div class="col-md-2">
+                    <div class="text-muted small">{{ __('dashboard.' . $type) }}</div>
+                    @if ($row->offersType($type))
+                        <div class="fw-semibold">{{ number_format($row->priceFor($type), 2) }} {{ __('dashboard.currency') }}</div>
+                    @else
+                        <div class="text-muted">{{ __('dashboard.not_offered') }}</div>
+                    @endif
+                </div>
+            @endforeach
 
             <div class="col-md-6">
                 <div class="text-muted small">{{ __('dashboard.created_at') }}</div>

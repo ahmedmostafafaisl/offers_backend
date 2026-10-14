@@ -10,10 +10,12 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next)
     {
-        $locale = session('locale', config('app.locale', 'en'));
+        // Web default language is Arabic (visitors can still switch via /lang/{locale}).
+        // Note: this middleware runs on the "web" group only, so API locale is unaffected.
+        $locale = session('locale', 'ar');
 
         if (!in_array($locale, ['en', 'ar'])) {
-            $locale = 'en';
+            $locale = 'ar';
         }
 
         App::setLocale($locale);

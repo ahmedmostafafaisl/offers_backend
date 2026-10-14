@@ -97,8 +97,8 @@
                                     </span>
                                     <strong>{{ $isAr ? 'البريد الإلكتروني' : 'Email' }}</strong>
                                 </div>
-                                <a href="mailto:support@offersplatform.sa" class="text-decoration-none">
-                                    support@offersplatform.sa
+                                <a href="mailto:oroodapplication@gmail.com" class="text-decoration-none">
+                                    oroodapplication@gmail.com
                                 </a>
                             </div>
                         </div>
@@ -128,11 +128,11 @@
                                 <div class="accordion-body">
                                     @if($isAr)
                                         يمكنك طلب حذف حسابك وبياناتك بشكل نهائي عبر التواصل معنا على
-                                        <a href="mailto:support@offersplatform.sa">support@offersplatform.sa</a>
+                                        <a href="mailto:oroodapplication@gmail.com">oroodapplication@gmail.com</a>
                                         من نفس البريد الإلكتروني المسجل في حسابك، وسيتم تنفيذ الطلب خلال 7 أيام عمل.
                                     @else
                                         You can request permanent deletion of your account and data by emailing us at
-                                        <a href="mailto:support@offersplatform.sa">support@offersplatform.sa</a>
+                                        <a href="mailto:oroodapplication@gmail.com">oroodapplication@gmail.com</a>
                                         from the email address registered on your account. Requests are processed
                                         within 7 business days.
                                     @endif
@@ -260,7 +260,7 @@
                         <h5 class="fw-bold mt-4">9. تواصل معنا</h5>
                         <p>
                             لأي استفسار بخصوص هذه السياسة أو بياناتك، راسلنا على
-                            <a href="mailto:support@offersplatform.sa">support@offersplatform.sa</a>.
+                            <a href="mailto:oroodapplication@gmail.com">oroodapplication@gmail.com</a>.
                         </p>
                     @else
                         <p>
@@ -337,7 +337,7 @@
                         <h5 class="fw-bold mt-4">9. Contact Us</h5>
                         <p>
                             For any questions about this policy or your data, contact us at
-                            <a href="mailto:support@offersplatform.sa">support@offersplatform.sa</a>.
+                            <a href="mailto:oroodapplication@gmail.com">oroodapplication@gmail.com</a>.
                         </p>
                     @endif
                 </section>

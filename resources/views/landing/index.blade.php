@@ -424,7 +424,7 @@
                     <div class="fw-bold mb-2">{{ app()->getLocale() === 'ar' ? 'تواصل' : 'Contact' }}</div>
 
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="text-muted">support@offersplatform.sa</span>
+                        <span class="text-muted">oroodapplication@gmail.com</span>
                         <i class="bi bi-envelope"></i>
                     </div>
 

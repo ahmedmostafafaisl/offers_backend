@@ -37,13 +37,15 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
             // user_id, plan_id, type (monthly/annually)
             $plan = Plan::findOrFail($data['plan_id']);
 
-            $type = $data['type']; // monthly | annually
-            $amount = match ($type) {
-                'quarterly'   => (float)$plan->quarterly_price,
-                'semi_annual' => (float)$plan->semi_annual_price,
-                'annual'      => (float)$plan->annual_price,
-                default       => throw new \InvalidArgumentException('Invalid subscription type'),
-            };
+            $type = $data['type']; // quarterly | semi_annual | annual
+
+            // The plan may offer only some types; never fall back to a 0 price.
+            $amount = $plan->priceFor($type);
+            if ($amount === null) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'type' => [__('dashboard.plan_type_not_offered')],
+                ]);
+            }
 
             // ✅ 1) create subscription as pending (inactive)
             $subscription = Subscription::create([

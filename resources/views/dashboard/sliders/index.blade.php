@@ -17,7 +17,7 @@
         $status = $r->status ? '<span class="status-pill"><span class="status-dot"></span>Active</span>' : '<span class="badge text-bg-secondary">Inactive</span>';
         return "
         <td>{$r->id}</td>
-        <td>{$r->name}</td>
+        <td>" . ($r->name ? e($r->name) : '-') . "</td>
         <td>{$img}</td>
         <td>{$status}</td>
         <td>" . optional($r->created_at)->format('d/m/Y') . "</td>
