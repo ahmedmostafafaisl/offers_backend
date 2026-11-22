@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 // ✅ Core
 use App\Http\Controllers\Dashboard\PlansController;
 use App\Http\Controllers\Dashboard\AnalyticsController;
+use App\Http\Controllers\Dashboard\FeaturedController;
+use App\Http\Controllers\Dashboard\SiteSettingsController;
 use App\Http\Controllers\Dashboard\RolesController;
 
 // ✅ Plans
@@ -40,6 +42,13 @@ use App\Http\Controllers\Dashboard\PendingProfileVerificationsController;
 
 // Analytics (users growth & performance charts)
 Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics');
+
+// Website content (logo, contacts, social links, support & privacy) + featured items
+Route::get('settings', [SiteSettingsController::class, 'index'])->name('settings.index');
+Route::post('settings/{group}', [SiteSettingsController::class, 'update'])->name('settings.update');
+Route::post('settings/{group}/reset', [SiteSettingsController::class, 'reset'])->name('settings.reset');
+Route::post('featured/offers/{offer}', [FeaturedController::class, 'offer'])->name('featured.offers');
+Route::post('featured/categories/{category}', [FeaturedController::class, 'category'])->name('featured.categories');
 
 // Users & Profiles
 Route::resource('users', UsersController::class);

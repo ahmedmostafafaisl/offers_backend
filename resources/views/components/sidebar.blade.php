@@ -96,5 +96,10 @@
             <i class="bi bi-cash-stack me-2"></i> {{ __('dashboard.payments') }}
         </a>
 
+        <a class="nav-link {{ request()->routeIs('dashboard.settings.*') ? 'active' : '' }}"
+            href="{{ route('dashboard.settings.index') }}">
+            <i class="bi bi-sliders me-2"></i> {{ __('site.site_settings') }}
+        </a>
+
     </nav>
 </aside>

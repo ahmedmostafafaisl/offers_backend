@@ -1,21 +1,21 @@
 @extends('layouts.landing')
 
-@section('title', app()->getLocale() === 'ar' ? 'منصة العروض داخل السعودية' : 'Offers Platform in Saudi Arabia')
+@section('title', $site->t('brand.site_name'))
 
 @section('body')
     {{-- Header --}}
     <nav class="navbar navbar-expand-lg bg-white border-bottom py-3">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ route('landing') }}">
-                <span class="rounded-circle d-inline-flex align-items-center justify-content-center"
-                    style="width:34px;height:34px;background:#efeaff;color:#f4c430;">
-                    <i class="bi bi-stars"></i>
-                </span>
-                <span>
-                    {{ app()->getLocale() === 'ar'
-        ? 'منصة عروض في المملكة العربية السعودية'
-        : 'Offers Platform in Saudi Arabia' }}
-                </span>
+                @if ($site->logoUrl())
+                    <img src="{{ $site->logoUrl() }}" alt="{{ $site->t('brand.name') }}" style="height:38px;width:auto;max-width:160px;object-fit:contain;">
+                @else
+                    <span class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                        style="width:34px;height:34px;background:#efeaff;color:#f4c430;">
+                        <i class="bi bi-stars"></i>
+                    </span>
+                @endif
+                <span>{{ $site->t('brand.name') }}</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLanding">
@@ -276,9 +276,11 @@
                             </a>
                         </div>
 
-                        <div class="mt-3 text-muted small">
-                            <i class="bi bi-envelope"></i> Oroodapplication@gmail.com
-                        </div>
+                        @if ($site->get('contact.email'))
+                            <div class="mt-3 text-muted small">
+                                <i class="bi bi-envelope"></i> {{ $site->get('contact.email') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -395,9 +397,7 @@
                 {{-- Right: About --}}
                 <div class="col-md-4 text-md-end">
                     <div class="fw-bold mb-2" style="font-size:18px;">
-                        {{ app()->getLocale() === 'ar'
-        ? 'منصة عروض في المملكة العربية السعودية'
-        : 'Offers Platform in Saudi Arabia' }}
+                        {{ $site->t('brand.name') }}
                     </div>
                     <div class="text-muted" style="line-height:1.8;">
                         {{ app()->getLocale() === 'ar'
@@ -423,20 +423,27 @@
                 <div class="col-md-4">
                     <div class="fw-bold mb-2">{{ app()->getLocale() === 'ar' ? 'تواصل' : 'Contact' }}</div>
 
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="text-muted">oroodapplication@gmail.com</span>
-                        <i class="bi bi-envelope"></i>
-                    </div>
+                    @if ($site->get('contact.email'))
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <a href="mailto:{{ $site->get('contact.email') }}" class="text-muted text-decoration-none">{{ $site->get('contact.email') }}</a>
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                    @endif
 
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="text-muted">+966 50 000 0000</span>
-                        <i class="bi bi-telephone"></i>
-                    </div>
+                    @if ($site->get('contact.phone'))
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="text-muted" dir="ltr">{{ $site->get('contact.phone') }}</span>
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                    @endif
 
                     <div class="d-flex align-items-center gap-3">
-                        <a href="#" class="footer-icon" aria-label="X"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="footer-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="footer-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        @foreach ($site->socialLinks() as $link)
+                            <a href="{{ $link['url'] }}" class="footer-icon" aria-label="{{ $link['label'] }}"
+                                @if ($link['url'] !== '#') target="_blank" rel="noopener" @endif>
+                                <i class="bi {{ $link['icon'] }}"></i>
+                            </a>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -451,7 +458,7 @@
 
                 <div class="text-muted text-md-end">
                     © {{ date('Y') }}
-                    {{ app()->getLocale() === 'ar' ? 'منصة العروض داخل السعودية' : 'Offers Platform in Saudi Arabia' }}.
+                    {{ $site->t('brand.site_name') }}.
                     {{ app()->getLocale() === 'ar' ? 'جميع الحقوق محفوظة.' : 'All rights reserved.' }}
                 </div>
             </div>

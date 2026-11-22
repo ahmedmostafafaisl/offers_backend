@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Support\SiteSettings;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Plan\PlanRepository;
 use App\Repositories\User\UserRepository;
@@ -75,6 +77,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Editable website content (logo, contacts, social, support/privacy ...)
+        $this->app->singleton(SiteSettings::class);
+
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(PlanRepositoryInterface::class, PlanRepository::class);
         $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
@@ -127,6 +132,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // $site is available in every view: {{ $site->get('contact.email') }} / {{ $site->t('brand.name') }}
+        // (settings are loaded lazily, nothing is queried until a view uses $site)
+        View::share('site', $this->app->make(SiteSettings::class));
     }
 }

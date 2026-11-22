@@ -1,6 +1,6 @@
 @php
     $title = 'Categories';
-    $columns = ['ID', 'Name', 'Image', 'Created'];
+    $columns = ['ID', 'Name', 'Image', 'Featured', 'Created'];
 @endphp
 
 @include('dashboard.crud.index', [
@@ -18,6 +18,7 @@
         <td>{$r->id}</td>
         <td>{$r->name}</td>
         <td>{$img}</td>
+        <td>" . view('dashboard.partials.featured-cell', ['row' => $r, 'route' => 'dashboard.featured.categories'])->render() . "</td>
         <td>" . optional($r->created_at)->format('d/m/Y') . "</td>
       ";
     }

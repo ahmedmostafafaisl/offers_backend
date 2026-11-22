@@ -1,6 +1,6 @@
 @php
     $title = 'Offers';
-    $columns = ['ID', 'Name', 'Provider', 'Category', 'City(AR/EN)', 'Active', 'Created'];
+    $columns = ['ID', 'Name', 'Provider', 'Category', 'City(AR/EN)', 'Active', 'Featured', 'Created'];
 @endphp
 
 @include('dashboard.crud.index', [
@@ -24,6 +24,7 @@
         <td>{$category}</td>
         <td>{$city}</td>
         <td>{$active}</td>
+        <td>" . view('dashboard.partials.featured-cell', ['row' => $r, 'route' => 'dashboard.featured.offers'])->render() . "</td>
         <td>" . optional($r->created_at)->format('d/m/Y') . "</td>
       ";
     }
